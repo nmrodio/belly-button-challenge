@@ -54,7 +54,8 @@ function buildCharts(sample) {
         text: otuLabels,
         marker: {
           size: sampleValues,
-          color: otuIds
+          color: otuIds,
+          colorscale: 'Earth'
         }
       }
     ];
@@ -71,24 +72,26 @@ function buildCharts(sample) {
     Plotly.newPlot('bubble', bubbleChart, bubbleChartLayout);
 
     // // For the Bar Chart, map the otu_ids to a list of strings for your yticks
-    // var yticks = 
+    var yticks = otuIds.slice(0, 10).map(strOtuIds => `OTU ${strOtuIds}`).reverse();
 
     // Build a Bar Chart
     // Don't forget to slice and reverse the input data appropriately
     var barChart = {
         type: 'bar',
         orientation: 'h',
-        x: sampleValues.slice(0,10).reverse(),
-        y: otuIds
-    }
+        x: sampleValues.slice(0, 10).reverse(),
+        y: yticks,
+        text: otuLabels.slice(0, 10).reverse()
+    };
 
     // Layout for Bar Chart
     var barChartLayout = {
-      title: 'Top 10 Bacteria Cultures Found'
-    }
+      title: 'Top 10 Bacteria Cultures Found',
+      xaxis: { title: 'Number of Bacteria' }
+    };
 
     // Render the Bar Chart
-    Ploty.newPlot('bar', barChart, barChartLayout)
+    Plotly.newPlot('bar', [barChart], barChartLayout)
 
   });
 }
