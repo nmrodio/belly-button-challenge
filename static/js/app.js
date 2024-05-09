@@ -7,7 +7,7 @@ function buildMetadata(sample) {
 
     // Filter the metadata for the object with the desired sample number
     var listFilteredMetadata = metadata.filter(metaObj => metaObj.id == sample);
-    var filteredMetadata= listFilteredMetadata[0]
+    var filteredMetadata= listFilteredMetadata[0];
 
     // Use d3 to select the panel with id of `#sample-metadata`
     var panel = d3.select("#sample-metadata");
@@ -25,8 +25,6 @@ function buildMetadata(sample) {
   });
 }
 
-buildMetadata('940')
-
 // function to build both charts
 function buildCharts(sample) {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
@@ -38,7 +36,6 @@ function buildCharts(sample) {
     var sampleNumber = samples.filter(sampleObj => sampleObj.id == sample);
     var sampleData = sampleNumber[0];
 
-    console.log(sampleData)
     // Get the otu_ids, otu_labels, and sample_values
     var otuIds = sampleData.otu_ids;
     var otuLabels = sampleData.otu_labels;
@@ -91,40 +88,46 @@ function buildCharts(sample) {
     };
 
     // Render the Bar Chart
-    Plotly.newPlot('bar', [barChart], barChartLayout)
+    Plotly.newPlot('bar', [barChart], barChartLayout);
 
   });
 }
-buildCharts('940')
 
-// // Function to run on page load
-// function init() {
-//   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
+// Function to run on page load
+function init() {
+  d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
-//     // Get the names field
+    // Get the names field
+    var names = data.names;
+
+    // Use d3 to select the dropdown with id of `#selDataset`
+    var dropdown = d3.select("#selDataset");
+
+    // Use the list of sample names to populate the select options
+    // Hint: Inside a loop, you will need to use d3 to append a new
+    // option for each sample name.
+
+    for (let i=0; i<names.length; i++){
+      dropdown.append('option').text(names[i])
+      .attr('value', names[i]);
+    };
 
 
-//     // Use d3 to select the dropdown with id of `#selDataset`
+    // Get the first sample from the list
+    var firstSample = names[0];
 
+    // Build charts and metadata panel with the first sample
+    buildMetadata(firstSample);
+    buildCharts(firstSample);
+  });
+}
 
-//     // Use the list of sample names to populate the select options
-//     // Hint: Inside a loop, you will need to use d3 to append a new
-//     // option for each sample name.
+// Function for event listener
+function optionChanged(newSample) {
+  // Build charts and metadata panel each time a new sample is selected
+  buildMetadata(newSample);
+  buildCharts(newSample);
+}
 
-
-//     // Get the first sample from the list
-
-
-//     // Build charts and metadata panel with the first sample
-
-//   });
-// }
-
-// // Function for event listener
-// function optionChanged(newSample) {
-//   // Build charts and metadata panel each time a new sample is selected
-
-// }
-
-// // Initialize the dashboard
-// init();
+// Initialize the dashboard
+init();
